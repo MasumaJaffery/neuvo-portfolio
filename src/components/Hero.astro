@@ -1,0 +1,182 @@
+---
+export interface Props {
+  tag?: string;
+  first?: string;
+  last?: string;
+  subtitle?: string;
+  photo?: string;       // default photo shown before play is pressed
+  photoPlaying?: string; // photo shown while "playing" (falls back to `photo` if omitted)
+  photoAlt?: string;
+}
+
+const {
+  tag = 'Founder · ICodeDreams',
+  first = 'Masuma',
+  last = 'Jaffery',
+  subtitle = 'Creative Developer crafting digital experiences that blend design & code.',
+  photo = '/Me1.jpg',
+  photoPlaying = '/Me2.jpg',
+  photoAlt = 'Masuma Jaffery',
+} = Astro.props;
+
+const secondPhoto = photoPlaying ?? photo;
+---
+
+<section id="hero">
+
+  <!-- left: name -->
+  <div class="hero-name">
+    <span class="tag" data-i18n="hero.tag">{tag}</span>
+    <span class="first" data-i18n="hero.firstName">{first}</span>
+    <span class="last" data-i18n="hero.lastName">{last}</span>
+    <div class="divider"></div>
+    <span class="sub" data-i18n="hero.subtitle">{subtitle}</span>
+    <div class="cta-row">
+      <a class="glow-btn glow-btn-primary" href="#work"><div class="edge-light"></div><span data-i18n="hero.viewWork">View Work</span></a>
+      <a class="glow-btn glow-btn-ghost" href="#about"><div class="edge-light"></div><span data-i18n="hero.aboutMe">About me →</span></a>
+    </div>
+  </div>
+
+  <!-- right: avatar -->
+  <div class="avatar-wrap">
+
+    <!-- glow + spinning ring -->
+    <div class="ring-glow"></div>
+    <div class="ring-spin"></div>
+    <div class="ring-aurora"></div>
+    <div class="ring-magnetic"></div>
+    <div class="ring-outer-glow"></div>
+    <div class="ring-static"></div>
+
+    <!-- avatar image (crossfades to a second photo when play is pressed) -->
+    <div class="avatar-img">
+      <img class="avatar-photo active" id="avatarPhotoDefault" src={photo} alt={photoAlt} />
+      <img class="avatar-photo" id="avatarPhotoPlaying" src={secondPhoto} alt={photoAlt} />
+    </div>
+
+    <!-- play button -->
+    <div class="play-btn" id="playBtn">
+      <svg id="iconPlay" width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <polygon points="5,3 15,9 5,15" fill="white"></polygon>
+      </svg>
+      <svg id="iconPause" width="18" height="18" viewBox="0 0 18 18" fill="none" style="display:none;">
+        <rect x="4" y="3" width="4" height="12" rx="1" fill="white"></rect>
+        <rect x="10" y="3" width="4" height="12" rx="1" fill="white"></rect>
+      </svg>
+    </div>
+
+    <!-- orbiting tech icons -->
+    <div class="orbit-container">
+
+      <!-- WordPress -->
+      <div class="orbit-icon">
+        <svg viewBox="0 0 24 24" fill="#21759B"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.1 14.6L8.1 9.7h1.4l1.5 4.3 1.5-4.3h1.3l-2.2 6.1-.7.8zm4.6 0l-1.1-2.9 1.1-3.2H17l-1.8 5.1c-.1.3-.4.5-.8.5-.3 0-.6-.2-.8-.5l-.2-.5.4-1.1.4 1.1c.1.2.3.4.5.4s.4-.2.5-.4l1.5-4.2h1.3l-1.9 5.7z"></path></svg>
+      </div>
+
+      <!-- Tailwind -->
+      <div class="orbit-icon">
+        <svg viewBox="0 0 24 24" fill="#38BDF8"><path d="M12 6C9.33 6 7.67 7.33 7 10c1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C13.4 11 14.47 12 17 12c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C15.6 7 14.53 6 12 6zm-5 6C4.33 12 2.67 13.33 2 16c1-1.33 2.17-1.83 3.5-1.5.76.19 1.3.74 1.9 1.35C8.4 17 9.47 18 12 18c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.3-.74-1.9-1.35C10.6 13 9.53 12 7 12z"></path></svg>
+      </div>
+
+      <!-- React -->
+      <div class="orbit-icon">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="2" fill="#61DAFB"></circle><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61DAFB" stroke-width="1.2"></ellipse><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61DAFB" stroke-width="1.2" transform="rotate(60 12 12)"></ellipse><ellipse cx="12" cy="12" rx="10" ry="4" fill="none" stroke="#61DAFB" stroke-width="1.2" transform="rotate(120 12 12)"></ellipse></svg>
+      </div>
+
+      <!-- Python -->
+      <div class="orbit-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C9 2 7 3.5 7 5.5V8h5v1H5.5C3.5 9 2 11 2 13.5S3.5 18 5.5 18H7v-2.5C7 13.5 9 12 12 12s5 1.5 5 3.5V18h1.5c2 0 3.5-2 3.5-4.5S18.5 9 16.5 9H15V8h-3V5.5C12 3.5 11 2 12 2z" fill="#3776AB"></path><circle cx="9.5" cy="5.5" r="1" fill="white"></circle><circle cx="14.5" cy="18.5" r="1" fill="white"></circle></svg>
+      </div>
+
+      <!-- Shopify -->
+      <div class="orbit-icon">
+        <svg viewBox="0 0 24 24" fill="#96BF48"><path d="M15.4 4.3s-.1-.7-.6-1.2c-.5-.4-1.1-.3-1.3-.3-.1 0-1.7.5-1.7.5C11.3 2.5 10.5 2 9.5 2 7.3 2 6 4 5.6 5.2L4 5.7c-.5.2-.5.2-.6.6L2 18l11 2 6-1.5-2.6-14c0-.1-.7-.2-1-.2zM12 5.2c0 0-.9.3-1.9.6.3-1.2 1-1.9 1.5-2.1.4.3.5.8.4 1.5zm-1.5-2.3c.2 0 .4 0 .5.1-.7.4-1.5 1.3-1.8 2.7l-2.3.7C7.3 5 8.4 2.9 10.5 2.9z"></path></svg>
+      </div>
+
+      <!-- analytics -->
+      <div class="orbit-icon">
+        <svg viewBox="0 0 24 24" fill="none">
+          <circle cx="12" cy="12" r="10" stroke="white" stroke-width="1.5"></circle>
+          <rect x="7" y="13" width="2" height="4" rx="1" fill="white"></rect>
+          <rect x="11" y="10" width="2" height="7" rx="1" fill="white"></rect>
+          <rect x="15" y="7" width="2" height="10" rx="1" fill="white"></rect>
+        </svg>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  /* photo crossfade: both images stacked, only one visible at a time.
+     .avatar-img already gets position:absolute + inset:10px from the
+     site's global CSS — that's what gives it its size, so we must NOT
+     override its position here (doing so collapsed it to 0 height). */
+  .avatar-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .avatar-photo.active { opacity: 1; }
+</style>
+
+<script>
+  import { initGlowButtons } from '../scripts/glow-btn';
+
+  initGlowButtons();
+
+  // Assign static orbit positions (hidden/paused until play is pressed)
+  const icons = document.querySelectorAll<HTMLElement>('.orbit-icon');
+  const anims = ['icon1', 'icon2', 'icon3', 'icon4', 'icon5', 'icon6'];
+
+  function setIconPositions(): void {
+    const isMobile = window.innerWidth <= 768;
+    const radius = isMobile ? 130 : 181;
+    icons.forEach((el, i) => {
+      const deg = i * 60;
+      el.style.transform = `rotate(${deg}deg) translateX(${radius}px) rotate(${-deg}deg)`;
+    });
+  }
+  setIconPositions();
+  window.addEventListener('resize', setIconPositions);
+
+  // Play / pause toggle for the orbiting icons + avatar photo crossfade
+  const playBtn = document.getElementById('playBtn');
+  const iconPlay = document.getElementById('iconPlay') as HTMLElement | null;
+  const iconPause = document.getElementById('iconPause') as HTMLElement | null;
+  const orbit = document.querySelector<HTMLElement>('.orbit-container');
+  const photoDefault = document.getElementById('avatarPhotoDefault');
+  const photoPlaying = document.getElementById('avatarPhotoPlaying');
+  let playing = false;
+
+  playBtn?.addEventListener('click', () => {
+    playing = !playing;
+    if (playing) {
+      icons.forEach((el, i) => {
+        el.style.animation = `${anims[i]} 20s linear infinite`;
+      });
+      orbit?.classList.add('playing');
+      if (iconPlay) iconPlay.style.display = 'none';
+      if (iconPause) iconPause.style.display = 'block';
+      photoDefault?.classList.remove('active');
+      photoPlaying?.classList.add('active');
+    } else {
+      icons.forEach((el) => {
+        const computed = getComputedStyle(el).transform;
+        el.style.animation = 'none';
+        el.style.transform = computed;
+      });
+      orbit?.classList.remove('playing');
+      if (iconPlay) iconPlay.style.display = 'block';
+      if (iconPause) iconPause.style.display = 'none';
+      photoPlaying?.classList.remove('active');
+      photoDefault?.classList.add('active');
+    }
+  });
+</script>

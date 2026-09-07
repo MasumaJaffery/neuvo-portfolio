@@ -1,0 +1,455 @@
+<div class="idream-widget" data-idream-widget lang="en" dir="ltr">
+
+  <button class="idream-launcher" type="button" data-idream-toggle aria-expanded="false" aria-controls="idream-panel" aria-label="Open iDream chat">
+    <img src="/idream-0.png" alt="" data-idream-launcher-img />
+  </button>
+
+  <section class="idream-panel" id="idream-panel" data-idream-panel aria-hidden="true" aria-label="iDream chat">
+    <div class="idream-frame">
+      <header class="idream-header">
+        <div class="idream-identity">
+          <img src="/idream-1.png" alt="" aria-hidden="true" />
+          <div>
+            <strong>idream<span class="idream-at"></span><span class="idream-path">: ~/chat</span></strong>
+            <span>replies instantly</span>
+          </div>
+        </div>
+        <button class="idream-close" type="button" data-idream-toggle aria-label="Close iDream chat">&times;</button>
+      </header>
+
+      <div class="idream-messages" data-idream-messages role="log" aria-live="polite" aria-label="Conversation">
+        <div class="idream-message idream-message-bot idream-welcome">
+          <div class="idream-message-inner">
+            <span class="idream-avatar" aria-hidden="true"><i class="ti ti-terminal-2"></i></span>
+            <div class="idream-bubble">
+              <span class="idream-message-meta">iDream</span>
+              <p><span class="idream-prompt">$</span> Hi! What can I do for you today? 👋</p>
+              <p class="idream-dim">Ask me about Masuma's work, skills, or projects.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="idream-quick-actions" data-idream-quick-actions>
+          <button type="button" class="glow-btn glow-btn-ghost" data-idream-prompt="Show me the projects">
+            <div class="edge-light"></div><span><i class="ti ti-apps"></i> Projects</span>
+          </button>
+          <button type="button" class="glow-btn glow-btn-ghost" data-idream-prompt="What skills does Masuma have?">
+            <div class="edge-light"></div><span><i class="ti ti-code"></i> Skills</span>
+          </button>
+          <button type="button" class="glow-btn glow-btn-ghost" data-idream-prompt="How can I contact Masuma?">
+            <div class="edge-light"></div><span><i class="ti ti-mail"></i> Contact</span>
+          </button>
+        </div>
+      </div>
+
+      <form class="idream-form" data-idream-form>
+        <input type="text" data-idream-input placeholder="Type your message here" autocomplete="off" aria-label="Message iDream" />
+        <button type="submit" class="idream-send" aria-label="Send message" data-idream-send>
+          <i class="ti ti-send"></i>
+        </button>
+      </form>
+      <footer class="idream-footer">Powered by <strong>iCodeDreams</strong></footer>
+    </div>
+  </section>
+</div>
+
+<style is:global>
+  .idream-widget {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 120;
+    font-family: 'IBM Plex Sans', sans-serif;
+    direction: ltr;
+    text-align: left;
+  }
+
+  /* ═══════════ Launcher ═══════════ */
+  .idream-launcher {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .idream-launcher img {
+    position: relative;
+    z-index: 2;
+    width: 88%;
+    height: 88%;
+    object-fit: contain;
+    transition: transform 0.2s ease;
+  }
+  .idream-launcher:hover img { transform: scale(1.06); }
+
+  /* ═══════════ Panel ═══════════ */
+  .idream-panel {
+    position: absolute;
+    right: 0;
+    bottom: 88px;
+    width: min(410px, calc(100vw - 32px));
+    height: min(600px, calc(100vh - 140px));
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(14px) scale(0.96);
+    transform-origin: bottom right;
+    transition: opacity 0.22s cubic-bezier(0.23, 1, 0.32, 1), transform 0.22s cubic-bezier(0.23, 1, 0.32, 1), visibility 0.22s;
+  }
+  .idream-panel[data-open='true'] { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+
+  .idream-frame {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: #0a0a0f;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+  }
+
+  .idream-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 10px;
+    height: 46px;
+    padding: 0 12px;
+    background: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .idream-identity { display: flex; flex: 1; min-width: 0; align-items: center; gap: 9px; }
+  .idream-identity img { width: 26px; height: 26px; object-fit: contain; background: rgba(255, 255, 255, 0.08); flex-shrink: 0; }
+  .idream-identity strong {
+    display: block;
+    overflow: hidden;
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 400;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .idream-identity .idream-at { color: #06b6d4; }
+  .idream-identity .idream-path { color: rgba(255, 255, 255, 0.4); }
+  .idream-identity span:not(.idream-at):not(.idream-path) {
+    display: block;
+    margin-top: 2px;
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 0.66rem;
+  }
+
+  .idream-close {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.3rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+  }
+  .idream-close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+  /* ═══════════ Messages ═══════════ */
+  .idream-messages {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    padding: 18px 14px;
+    background: #101116;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+  }
+  .idream-messages::-webkit-scrollbar { width: 6px; }
+  .idream-messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); }
+
+  .idream-message {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    animation: idream-rise 0.25s ease both;
+  }
+  .idream-message-user { justify-content: flex-end; }
+
+  .idream-message-inner {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: 88%;
+  }
+  .idream-message-user .idream-message-inner { flex-direction: row-reverse; }
+
+  @keyframes idream-rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .idream-avatar {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.35);
+    color: #06b6d4;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  .idream-bubble {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #120F17;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.79rem;
+    line-height: 1.55;
+  }
+  .idream-bubble p { margin: 0; }
+  .idream-bubble p + p { margin-top: 6px; }
+  .idream-prompt { color: #22c55e; font-family: 'Share Tech Mono', monospace; margin-right: 4px; }
+  .idream-dim { color: rgba(255, 255, 255, 0.5); font-size: 0.74rem; }
+
+  .idream-message-meta {
+    display: block;
+    margin-bottom: 4px;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .idream-message-user .idream-bubble {
+    background: #120F17;
+    color: #fff;
+  }
+  .idream-message-user .idream-avatar {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.35);
+    color: #22c55e;
+  }
+
+  /* typing indicator */
+  .idream-typing .idream-bubble { display: flex; align-items: center; gap: 4px; padding: 12px 14px; }
+  .idream-typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    animation: idream-typing 1.1s ease-in-out infinite;
+  }
+  .idream-typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .idream-typing-dot:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes idream-typing {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-3px); opacity: 1; }
+  }
+
+  .idream-quick-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 6px;
+    margin-top: 2px;
+    padding-left: 34px;
+  }
+  .idream-quick-actions .glow-btn { min-width: 0; flex: 0 1 auto; width: fit-content; }
+  .idream-quick-actions .glow-btn span { justify-content: center; gap: 2px; padding: 8px 10px; font-size: 0.8rem; letter-spacing: 0; white-space: nowrap; }
+
+  /* ═══════════ Input ═══════════ */
+  .idream-form {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 10px 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: #000;
+  }
+  .idream-form input {
+    min-width: 0;
+    flex: 1;
+    padding: 9px 6px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #fff;
+    direction: ltr;
+    text-align: left;
+    font: inherit;
+    font-size: 0.79rem;
+  }
+  .idream-form input::placeholder { color: rgba(255, 255, 255, 0.35); }
+
+  .idream-send {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .idream-send:hover { transform: scale(1.06); box-shadow: 0 0 14px rgba(6, 182, 212, 0.45); }
+  .idream-send:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .idream-footer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    background: #000;
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 0.62rem;
+    text-align: center;
+  }
+  .idream-footer strong {
+    font-weight: 600;
+    background: linear-gradient(90deg, #d946ef, #ec4899, #06b6d4, #22c55e, #eab308, #d946ef);
+    background-size: 300% 100%;
+    animation: gradientMove 4s ease infinite;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  @media (max-width: 600px) {
+    .idream-widget { right: 16px; bottom: 16px; }
+    .idream-panel { right: -2px; bottom: 82px; width: calc(100vw - 24px); height: min(600px, calc(100vh - 110px)); }
+  }
+</style>
+
+<script>
+  import { initGlowButtons } from '../scripts/glow-btn';
+  initGlowButtons();
+
+  const widget = document.querySelector<HTMLElement>('[data-idream-widget]');
+  const panel = widget?.querySelector<HTMLElement>('[data-idream-panel]');
+  const messages = widget?.querySelector<HTMLElement>('[data-idream-messages]');
+  const input = widget?.querySelector<HTMLInputElement>('[data-idream-input]');
+  const form = widget?.querySelector<HTMLFormElement>('[data-idream-form]');
+  const sendBtn = widget?.querySelector<HTMLButtonElement>('[data-idream-send]');
+  const launcher = widget?.querySelector<HTMLButtonElement>('.idream-launcher');
+  const launcherImage = widget?.querySelector<HTMLImageElement>('[data-idream-launcher-img]');
+  const toggles = widget?.querySelectorAll<HTMLButtonElement>('[data-idream-toggle]');
+  const quickActions = widget?.querySelectorAll<HTMLButtonElement>('[data-idream-prompt]');
+
+  function setOpen(open: boolean): void {
+    panel?.setAttribute('data-open', String(open));
+    panel?.setAttribute('aria-hidden', String(!open));
+    toggles?.forEach((toggle) => toggle.setAttribute('aria-expanded', String(open)));
+    if (launcherImage) launcherImage.src = open ? '/idream-1.png' : '/idream-0.png';
+    launcher?.setAttribute('aria-label', open ? 'Close iDream chat' : 'Open iDream chat');
+    if (open) {
+      window.setTimeout(() => input?.focus(), 150);
+    } else {
+      launcher?.focus();
+    }
+  }
+
+  function addMessage(text: string, type: 'bot' | 'user'): void {
+    if (!messages) return;
+    const row = document.createElement('div');
+    row.className = `idream-message idream-message-${type}`;
+
+    const inner = document.createElement('div');
+    inner.className = 'idream-message-inner';
+
+    const avatar = document.createElement('span');
+    avatar.className = 'idream-avatar';
+    avatar.setAttribute('aria-hidden', 'true');
+    avatar.innerHTML = type === 'bot' ? '<i class="ti ti-terminal-2"></i>' : '<i class="ti ti-user"></i>';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'idream-bubble';
+    const meta = document.createElement('span');
+    meta.className = 'idream-message-meta';
+    meta.textContent = type === 'bot' ? 'iDream' : 'You';
+    const p = document.createElement('p');
+    if (type === 'bot') {
+      const prompt = document.createElement('span');
+      prompt.className = 'idream-prompt';
+      prompt.textContent = '$';
+      p.append(prompt, document.createTextNode(' ' + text));
+    } else {
+      p.textContent = text;
+    }
+    bubble.append(meta, p);
+    inner.append(avatar, bubble);
+    row.append(inner);
+    messages.append(row);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function showTyping(): HTMLElement {
+    const row = document.createElement('div');
+    row.className = 'idream-message idream-message-bot idream-typing';
+    row.innerHTML = `
+      <div class="idream-message-inner">
+        <span class="idream-avatar" aria-hidden="true"><i class="ti ti-terminal-2"></i></span>
+        <div class="idream-bubble" aria-label="iDream is typing">
+          <span class="idream-typing-dot"></span><span class="idream-typing-dot"></span><span class="idream-typing-dot"></span>
+        </div>
+      </div>`;
+    messages?.append(row);
+    if (messages) messages.scrollTop = messages.scrollHeight;
+    return row;
+  }
+
+  function replyTo(text: string): string {
+    const question = text.toLowerCase();
+    if (question.includes('project') || question.includes('work')) return 'You can explore the project showcase in the Work section. Open any project to see its details and links.';
+    if (question.includes('skill') || question.includes('stack') || question.includes('tech')) return 'Masuma works across frontend, backend, mobile, CMS, commerce, and API design.';
+    if (question.includes('contact') || question.includes('hire') || question.includes('email')) return 'You can reach Masuma through the contact form or email at masumajaffery1@gmail.com.';
+    if (question.includes('hello') || question.includes('hi')) return "Hi! What would you like to know about Masuma's work?";
+    return 'I can help with projects, skills, contact details, and the technologies used on this portfolio.';
+  }
+
+  function submitPrompt(text: string): void {
+    addMessage(text, 'user');
+    if (sendBtn) sendBtn.disabled = true;
+    const typingRow = showTyping();
+    window.setTimeout(() => {
+      typingRow.remove();
+      addMessage(replyTo(text), 'bot');
+      if (sendBtn) sendBtn.disabled = false;
+    }, 500 + Math.random() * 400);
+  }
+
+  toggles?.forEach((toggle) => toggle.addEventListener('click', () => setOpen(panel?.getAttribute('data-open') !== 'true')));
+  quickActions?.forEach((action) => action.addEventListener('click', () => submitPrompt(action.dataset.idreamPrompt ?? '')));
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const text = input?.value.trim();
+    if (!text) return;
+    if (input) input.value = '';
+    submitPrompt(text);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && panel?.getAttribute('data-open') === 'true') setOpen(false);
+  });
+</script>

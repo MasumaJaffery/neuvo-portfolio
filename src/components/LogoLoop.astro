@@ -1,0 +1,31 @@
+---
+const logos = [
+  { icon: 'ti-brand-react', label: 'React' },
+  { icon: 'ti-brand-javascript', label: 'JavaScript' },
+  { icon: 'ti-brand-typescript', label: 'TypeScript' },
+  { icon: 'ti-brand-python', label: 'Python' },
+  { icon: 'ti-brand-wordpress', label: 'WordPress' },
+  { icon: 'ti-brand-php', label: 'PHP' },
+  { icon: 'ti-brand-tailwind', label: 'Tailwind' },
+  { icon: 'ti-brand-nodejs', label: 'Node.js' },
+  { icon: 'ti-brand-git', label: 'Git' },
+  { icon: 'ti-shopping-bag', label: 'Shopify' },
+];
+---
+
+<div class="logoloop-strip" lang="en" dir="ltr">
+  <div class="logoloop-line logoloop-line-top"></div>
+  <div class="logoloop-track">
+    <div class="logoloop-content">
+      {logos.map((l) => (
+        <span class="logoloop-item"><i class={`ti ${l.icon}`}></i> {l.label}</span>
+      ))}
+    </div>
+    <div class="logoloop-content" aria-hidden="true">
+      {logos.map((l) => (
+        <span class="logoloop-item"><i class={`ti ${l.icon}`}></i> {l.label}</span>
+      ))}
+    </div>
+  </div>
+  <div class="logoloop-line logoloop-line-bottom"></div>
+</div>

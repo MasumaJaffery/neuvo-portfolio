@@ -1,0 +1,255 @@
+---
+export interface Props {
+  terminalTitle?: string;
+}
+
+const { terminalTitle = 'guriya@icodedreams: ~/about' } = Astro.props;
+---
+
+<section id="about">
+  <div class="section-title-row">
+    <span class="circuit-rail"><span class="circuit-pulse"></span></span>
+    <h2 class="section-title">
+      <span class="st-bracket">&lt;</span><span data-i18n="about.title">About&nbsp;Us</span><span class="st-bracket"> /&gt;</span>
+    </h2>
+    <span class="circuit-rail"><span class="circuit-pulse circuit-pulse-rev"></span></span>
+  </div>
+
+  <div class="about-terminal-window">
+    <div class="about-tw-bar">
+      <span class="about-tw-dots">
+        <span class="about-tw-dot about-tw-dot-r"></span>
+        <span class="about-tw-dot about-tw-dot-y"></span>
+        <span class="about-tw-dot about-tw-dot-g"></span>
+      </span>
+      <span class="about-tw-title">{terminalTitle}</span>
+    </div>
+
+    <div class="about-tw-body">
+      <div class="hacker-wrap">
+
+        <!-- LEFT COLUMN -->
+        <div class="hacker-left">
+
+          <div class="hacker-card hacker-id-card">
+            <div class="hacker-fields">
+              <div class="hacker-card-title" data-i18n="about.whoAmI">WHO AM I??</div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.user">User</span><span class="hf-val">guriya</span></div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.realName">Real Name</span><span class="hf-val">Masuma Jaffery</span></div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.role">Role</span><span class="hf-val" data-i18n="about.roleValue">Full-Stack Dev / Founder</span></div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.company">Company</span><span class="hf-val">iCodeDreams</span></div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.focus">Focus</span><span class="hf-val" data-i18n="about.focusValue">Web · Mobile · Commerce</span></div>
+              <div class="hacker-divider"></div>
+              <div class="hacker-uname">uname -a</div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.stackLabel">Stack</span><span class="hf-val" data-i18n="about.stackValue">MERN + Native</span></div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.uptime">Uptime</span><span class="hf-val" data-i18n="about.uptimeValue">5+ years</span></div>
+              <div class="hacker-field"><span class="hf-key" data-i18n="about.status">Status</span><span class="hf-val hf-online" data-i18n="about.statusValue">Available ●</span></div>
+            </div>
+          </div>
+
+          <div class="hacker-card hacker-bio-card">
+            <div class="hacker-card-title" data-i18n="about.helloTitle">Hello, I am Masuma Jaffery</div>
+            <p class="hacker-bio-text" data-i18n="about.bio">
+              I specialize in building fast, reliable web and mobile products — from custom Shopify /
+              WooCommerce stores to cross-platform apps. My mission: turn client ideas into shipped,
+              working software.
+            </p>
+            <div class="hacker-bottom-row">
+              <div class="hacker-socials">
+                <a href="https://github.com/MasumaJaffery" target="_blank" rel="noopener" class="glow-btn glow-btn-ghost"><div class="edge-light"></div><span><i class="ti ti-brand-github"></i></span></a>
+                <a href="https://www.linkedin.com/in/masumajaffery/" target="_blank" rel="noopener" class="glow-btn glow-btn-ghost"><div class="edge-light"></div><span><i class="ti ti-brand-linkedin"></i></span></a>
+                <a href="mailto:masumajaffery1@gmail.com" class="glow-btn glow-btn-ghost"><div class="edge-light"></div><span><i class="ti ti-mail"></i></span></a>
+              </div>
+              <a href="/Resume.pdf" target="_blank" rel="noopener" download="Masuma-Jaffery-Resume.pdf" class="glow-btn glow-btn-primary resume-link"><div class="edge-light"></div><span><i class="ti ti-download"></i> <span data-i18n="about.getResume">Get Resume</span></span></a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div class="hacker-right">
+
+          <div class="hacker-pill-row">
+            <span class="hacker-pill tag-c-pink" data-i18n="about.pillFullStack">Full-Stack Dev</span>
+            <span class="hacker-pill tag-c-cyan" data-i18n="about.pillUiUx">UI / UX</span>
+            <span class="hacker-pill tag-c-green" data-i18n="about.pillApiDesign">API Design</span>
+          </div>
+
+          <div class="hacker-card skill-box skill-pink">
+            <div class="hacker-card-title" data-i18n="about.frontend">Frontend</div>
+            <div class="tag-row">
+              <span class="tag-pill tag-c-pink">React</span>
+              <span class="tag-pill tag-c-pink">TypeScript</span>
+              <span class="tag-pill tag-c-pink">JavaScript</span>
+              <span class="tag-pill tag-c-pink">Tailwind</span>
+            </div>
+          </div>
+
+          <div class="hacker-card skill-box skill-cyan">
+            <div class="hacker-card-title" data-i18n="about.backendMobile">Backend &amp; Mobile</div>
+            <div class="tag-row">
+              <span class="tag-pill tag-c-cyan">Node.js</span>
+              <span class="tag-pill tag-c-cyan">Python</span>
+              <span class="tag-pill tag-c-cyan">React Native</span>
+              <span class="tag-pill tag-c-cyan">Kotlin</span>
+            </div>
+          </div>
+
+          <div class="hacker-card skill-box skill-green">
+            <div class="hacker-card-title" data-i18n="about.cmsCommerce">CMS &amp; Commerce</div>
+            <div class="tag-row">
+              <span class="tag-pill tag-c-green">WordPress</span>
+              <span class="tag-pill tag-c-green">WooCommerce</span>
+              <span class="tag-pill tag-c-green">Shopify</span>
+            </div>
+          </div>
+
+          <div class="hacker-card skill-box skill-yellow">
+            <div class="hacker-card-title" data-i18n="about.toolsWorkflow">Tools &amp; Workflow</div>
+            <div class="tag-row">
+              <span class="tag-pill tag-c-yellow">Git</span>
+              <span class="tag-pill tag-c-yellow">Figma</span>
+              <span class="tag-pill tag-c-yellow">REST API</span>
+              <span class="tag-pill tag-c-yellow">UI / UX</span>
+              <span class="tag-pill tag-c-yellow">Workflows</span>
+              <span class="tag-pill tag-c-yellow">AI</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* icon-only glow-btn: tighter than the text pill so it stays compact/square */
+  .hacker-socials .glow-btn span {
+    padding: 8px;
+    display: inline-flex;
+  }
+  .hacker-socials .glow-btn span i {
+    font-size: 15px;
+  }
+  .resume-link {
+    flex: 0 0 auto;
+    width: fit-content;
+    white-space: nowrap;
+  }
+
+  /* ===== Section title: <About Us /> with animated circuit rails ===== */
+  .section-title-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    max-width: 900px;
+    margin: 0 auto 32px;
+    padding: 0 16px;
+  }
+
+  .section-title {
+    flex: 0 0 auto;
+    margin: 0;
+    font-family: 'Share Tech Mono', monospace;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: linear-gradient(135deg, #d946ef, #ec4899, #06b6d4, #22c55e, #eab308, #ec4899, #d946ef);
+    background-size: 300% 300%;
+    animation: gradientMove 5s ease infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .st-bracket {
+    -webkit-text-fill-color: #22c55e;
+    color: #22c55e;
+    text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
+  }
+
+  .circuit-rail {
+    position: relative;
+    flex: 1 1 auto;
+    height: 16px;
+    min-width: 24px;
+    overflow: hidden;
+  }
+
+  /* base track: dashed line that continuously flows */
+  .circuit-rail::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 1.5px;
+    transform: translateY(-50%);
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,0.35) 0 5px,
+      transparent 5px 11px
+    );
+    background-size: 22px 100%;
+    animation: circuitDash 1.1s linear infinite;
+  }
+
+  /* end node dots */
+  .circuit-rail::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    transform: translate(-1px, -50%);
+    background: #06b6d4;
+    box-shadow: 0 0 6px #06b6d4, 0 0 6px #06b6d4;
+  }
+  .section-title-row .circuit-rail:last-child::after {
+    left: auto; right: 0;
+    transform: translate(1px, -50%);
+    background: #ec4899;
+    box-shadow: 0 0 6px #ec4899, 0 0 6px #ec4899;
+  }
+
+  @keyframes circuitDash {
+    to { background-position: -22px 0; }
+  }
+
+  /* traveling signal pulse riding along the rail */
+  .circuit-pulse {
+    position: absolute;
+    top: 50%; left: 0;
+    width: 10px; height: 10px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #ffffff 0%, #06b6d4 55%, transparent 75%);
+    box-shadow: 0 0 8px 2px #06b6d4, 0 0 16px 4px rgba(6,182,212,0.5);
+    animation: pulseTravel 2.4s ease-in-out infinite;
+  }
+  .circuit-pulse-rev {
+    background: radial-gradient(circle, #ffffff 0%, #ec4899 55%, transparent 75%);
+    box-shadow: 0 0 8px 2px #ec4899, 0 0 16px 4px rgba(236,72,153,0.5);
+    animation: pulseTravelRev 2.4s ease-in-out infinite;
+    animation-delay: 0.3s;
+  }
+
+  @keyframes pulseTravel {
+    0%   { left: 0%;   opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+  }
+  @keyframes pulseTravelRev {
+    0%   { left: 100%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: 0%;   opacity: 0; }
+  }
+</style>
+
+<script>
+  import { initGlowButtons } from '../scripts/glow-btn';
+  initGlowButtons();
+</script>

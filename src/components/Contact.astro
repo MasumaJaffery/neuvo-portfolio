@@ -1,0 +1,332 @@
+---
+export interface Props {
+  email?: string;
+}
+const { email = 'masuma@icodedreams.me' } = Astro.props;
+---
+
+<section id="contact">
+  <canvas id="circuit"></canvas>
+  <div class="contact-dark-overlay"></div>
+
+  <div class="contact-overlay">
+    <form
+      class="contact-card"
+      id="contactForm"
+      action="https://formspree.io/f/xzbqjwon"
+      method="POST"
+    >
+
+      <div class="field" style="margin-top:20px;">
+        <label for="cf-name" data-i18n="contact.nameLabel">name</label>
+        <input type="text" id="cf-name" name="name" placeholder="your name" data-i18n-placeholder="contact.namePlaceholder" required>
+      </div>
+
+      <div class="field">
+        <label for="cf-email" data-i18n="contact.emailLabel">email</label>
+        <input type="email" id="cf-email" name="email" placeholder="you@domain.com" data-i18n-placeholder="contact.emailPlaceholder" required>
+      </div>
+
+      <div class="field">
+        <label for="cf-message" data-i18n="contact.messageLabel">message</label>
+        <textarea id="cf-message" name="message" rows="7" placeholder="type your message..." data-i18n-placeholder="contact.messagePlaceholder" required></textarea>
+      </div>
+
+      <div class="send-btn-wrap">
+        <button type="submit" class="send-btn" id="cfSubmitBtn">
+          <span class="ts">$</span> <span data-i18n="contact.sendBtn">send --now</span>
+        </button>
+      </div>
+
+      <p class="status" id="cfStatus"></p>
+    </form>
+
+    <div class="contact-footer-links">
+      <a href={`mailto:${email}`} class="cf-link">
+        <i class="ti ti-mail"></i> {email}
+      </a>
+      <a href="https://wa.me/923247767274" class="cf-link cf-whatsapp" target="_blank" rel="noreferrer" aria-label="Chat on WhatsApp">
+        <i class="ti ti-brand-whatsapp"></i> WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // ══ Contact section circuit background animation ══
+  // Exact port of the original site's PCB-trace + travelling-pulse canvas.
+  interface Segment {
+    x1: number;
+    y1: number;
+    x2: number;
+    y2: number;
+    dir: 'v' | 'h';
+    color: string;
+  }
+  interface Node {
+    x: number;
+    y: number;
+    via: boolean;
+  }
+
+  (function () {
+    const canvas = document.getElementById('circuit') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+
+    let W = 0;
+    let H = 0;
+    let cols = 0;
+    let rows = 0;
+    const CELL = 44;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const NEON = ['#d946ef', '#ec4899', '#06b6d4', '#22c55e', '#eab308', '#ec4899', '#d946ef'];
+    function neonAt(i: number): string {
+      return NEON[((i % NEON.length) + NEON.length) % NEON.length];
+    }
+
+    let segments: Segment[] = [];
+    let nodes: Node[] = [];
+
+    function buildGrid(): void {
+      segments = [];
+      nodes = [];
+      const g: { x: number; y: number; via: boolean }[][] = [];
+      for (let cx = 0; cx < cols; cx++) {
+        g[cx] = [];
+        for (let cy = 0; cy < rows; cy++) {
+          g[cx][cy] = { x: cx * CELL, y: cy * CELL, via: Math.random() < 0.16 };
+        }
+      }
+
+      for (let cx = 0; cx < cols; cx++) {
+        const trunkColor = neonAt(cx);
+        let y = 0;
+        while (y < rows - 1) {
+          const runLen = 1 + Math.floor(Math.random() * 4);
+          const yEnd = Math.min(rows - 1, y + runLen);
+          segments.push({
+            x1: g[cx][y].x,
+            y1: g[cx][y].y,
+            x2: g[cx][yEnd].x,
+            y2: g[cx][yEnd].y,
+            dir: 'v',
+            color: trunkColor,
+          });
+          if (Math.random() < 0.55 && cx < cols - 1) {
+            const jogLen = 1 + Math.floor(Math.random() * 2);
+            const cxEnd = Math.min(cols - 1, cx + jogLen);
+            segments.push({
+              x1: g[cx][yEnd].x,
+              y1: g[cx][yEnd].y,
+              x2: g[cxEnd][yEnd].x,
+              y2: g[cx][yEnd].y,
+              dir: 'h',
+              color: trunkColor,
+            });
+          }
+          y = yEnd + (Math.random() < 0.3 ? 0 : 1);
+          if (runLen === 0) y++;
+        }
+      }
+
+      const seen = new Set<string>();
+      segments.forEach((s) => {
+        [
+          [s.x1, s.y1],
+          [s.x2, s.y2],
+        ].forEach(([x, y]) => {
+          const key = x + ',' + y;
+          if (!seen.has(key)) {
+            seen.add(key);
+            nodes.push({ x, y, via: true });
+          }
+        });
+      });
+    }
+
+    function resize(): void {
+      const rect = canvas!.getBoundingClientRect();
+      W = canvas!.width = rect.width;
+      H = canvas!.height = rect.height;
+      cols = Math.ceil(W / CELL) + 2;
+      rows = Math.ceil(H / CELL) + 2;
+      buildGrid();
+    }
+
+    class Pulse {
+      seg!: { x1: number; y1: number; x2: number; y2: number };
+      t = 0;
+      speed = 0;
+      color = '#ffffff';
+
+      constructor() {
+        this.reset();
+      }
+      reset(startSeg?: Segment | { x1: number; y1: number; x2: number; y2: number }): void {
+        const seg = startSeg || segments[Math.floor(Math.random() * segments.length)];
+        this.seg = seg;
+        this.t = 0;
+        this.speed = 0.006 + Math.random() * 0.01;
+        this.color = NEON[Math.floor(Math.random() * NEON.length)];
+      }
+      step(): void {
+        this.t += this.speed;
+        if (this.t >= 1) {
+          const ex = this.seg.x2;
+          const ey = this.seg.y2;
+          const candidates = segments.filter((s) => (s.x1 === ex && s.y1 === ey) || (s.x2 === ex && s.y2 === ey));
+          if (candidates.length) {
+            const next = candidates[Math.floor(Math.random() * candidates.length)];
+            if (next.x1 === ex && next.y1 === ey) {
+              this.seg = next;
+            } else {
+              this.seg = { x1: next.x2, y1: next.y2, x2: next.x1, y2: next.y1 };
+            }
+            this.t = 0;
+          } else {
+            this.reset();
+          }
+        }
+      }
+      pos(): { x: number; y: number } {
+        const s = this.seg;
+        return {
+          x: s.x1 + (s.x2 - s.x1) * this.t,
+          y: s.y1 + (s.y2 - s.y1) * this.t,
+        };
+      }
+    }
+
+    let pulses: Pulse[] = [];
+    function initPulses(): void {
+      pulses = [];
+      const count = Math.max(14, Math.floor((cols * rows) / 26));
+      for (let i = 0; i < count; i++) pulses.push(new Pulse());
+    }
+
+    function draw(): void {
+      ctx.clearRect(0, 0, W, H);
+
+      ctx.lineWidth = 1.4;
+      ctx.shadowBlur = 6;
+      segments.forEach((s) => {
+        ctx.strokeStyle = s.color;
+        ctx.shadowColor = s.color;
+        ctx.globalAlpha = 0.55;
+        ctx.beginPath();
+        ctx.moveTo(s.x1, s.y1);
+        ctx.lineTo(s.x2, s.y2);
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
+
+      nodes.forEach((n) => {
+        if (n.via) {
+          const c = neonAt(Math.round(n.x / CELL));
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = c;
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 3.2, 0, Math.PI * 2);
+          ctx.fillStyle = c;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      });
+
+      pulses.forEach((p) => {
+        if (!reduceMotion) p.step();
+        const pos = p.pos();
+        const grad = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 12);
+        grad.addColorStop(0, '#ffffff');
+        grad.addColorStop(0.35, p.color);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 1.6, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    canvas.addEventListener('click', (e: MouseEvent) => {
+      const rect = canvas!.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+      let nearest = segments[0];
+      let best = Infinity;
+      segments.forEach((s) => {
+        const mx = (s.x1 + s.x2) / 2;
+        const my = (s.y1 + s.y2) / 2;
+        const d = (mx - cx) ** 2 + (my - cy) ** 2;
+        if (d < best) {
+          best = d;
+          nearest = s;
+        }
+      });
+      const p = new Pulse();
+      p.reset(nearest);
+      p.speed = 0.02;
+      pulses.push(p);
+      if (pulses.length > 200) pulses.shift();
+    });
+
+    window.addEventListener('resize', () => {
+      resize();
+      initPulses();
+    });
+
+    resize();
+    initPulses();
+    draw();
+  })();
+
+  // ══ Contact form submit — posts to Formspree via fetch, keeps the
+  //     terminal-style status line instead of a full page redirect ══
+  (function () {
+    const cf = document.getElementById('contactForm') as HTMLFormElement | null;
+    const cfStatus = document.getElementById('cfStatus');
+    const cfBtn = document.getElementById('cfSubmitBtn') as HTMLButtonElement | null;
+    if (!cf || !cfStatus) return;
+
+    cf.addEventListener('submit', async function (e: Event) {
+      e.preventDefault();
+
+      const { getText, getCurrentLang } = await import('../i18n/translations');
+      const lang = getCurrentLang();
+
+      if (cfStatus) cfStatus.textContent = getText(lang, 'contact.statusSending') ?? '> transmitting...';
+      if (cfBtn) cfBtn.disabled = true;
+
+      try {
+        const response = await fetch(cf.action, {
+          method: 'POST',
+          body: new FormData(cf),
+          headers: { Accept: 'application/json' },
+        });
+
+        if (response.ok) {
+          cfStatus.textContent = getText(lang, 'contact.statusSuccess') ?? "> message received. i'll reply soon.";
+          cf.reset();
+        } else {
+          const data = await response.json().catch(() => null);
+          const msg = data?.errors?.map((err: { message: string }) => err.message).join(', ');
+          const failed = getText(lang, 'contact.statusErrorGeneric') ?? '> transmission failed. try again.';
+          cfStatus.textContent = msg ? `> transmission failed: ${msg}` : failed;
+        }
+      } catch {
+        cfStatus.textContent = getText(lang, 'contact.statusErrorGeneric') ?? '> transmission failed: check your connection and try again.';
+      } finally {
+        if (cfBtn) cfBtn.disabled = false;
+      }
+    });
+  })();
+</script>

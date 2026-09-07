@@ -1,0 +1,305 @@
+<nav id="navbar">
+  <!-- top row: always visible -->
+  <div class="nav-top-row">
+    <a class="nav-logo" href="#">ICODEDREAMS</a>
+    <ul class="nav-links">
+      <li><a href="#hero" data-i18n="nav.home">Home</a></li>
+      <li><a href="#work" data-i18n="nav.work">Work</a></li>
+      <li><a href="#about" data-i18n="nav.about">About</a></li>
+      <li><a href="#about" data-i18n="nav.stack">Stack</a></li>
+    </ul>
+    <div class="nav-actions">
+      <div class="language-picker desktop-language" data-lang-switcher>
+        <button type="button" class="lang-trigger glow-btn glow-btn-primary" data-lang-trigger aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+          <div class="edge-light"></div>
+          <i class="ti ti-world language-icon" aria-hidden="true"></i>
+          <span class="lang-code" data-lang-code>EN</span>
+          <span class="lang-name" data-lang-name>English</span>
+          <i class="ti ti-chevron-down lang-chevron" aria-hidden="true"></i>
+        </button>
+        <ul class="lang-menu" data-lang-menu role="listbox" aria-label="Language">
+          <li role="option" data-lang-option="en">English</li>
+          <li role="option" data-lang-option="ur">اردو</li>
+          <li role="option" data-lang-option="ar">العربية</li>
+          <li role="option" data-lang-option="es">Español</li>
+          <li role="option" data-lang-option="fa">فارسی</li>
+        </ul>
+      </div>
+      <a class="glow-btn glow-btn-primary nav-desktop-cta" href="#contact"><div class="edge-light"></div><span data-i18n="nav.contact">Get in touch</span></a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- mobile card dropdown -->
+  <div class="nav-mobile-content" id="navMobileContent">
+    <div class="nav-card" style="background:rgba(255,255,255,0.05); color:#fff; gap:0;">
+      <div class="nav-card-links" style="margin-bottom:18px;">
+        <a class="nav-card-link" href="#hero" data-i18n="nav.home">Home</a>
+        <a class="nav-card-link" href="#work" data-i18n="nav.work">Work</a>
+        <a class="nav-card-link" href="#about" data-i18n="nav.about">About</a>
+        <a class="nav-card-link" href="#about" data-i18n="nav.stack">Stack</a>
+      </div>
+      <div style="height:1px; background:rgba(255,255,255,0.08); margin-bottom:18px;"></div>
+      <div class="language-picker mobile-language" data-lang-switcher>
+        <button type="button" class="lang-trigger glow-btn glow-btn-primary" data-lang-trigger aria-haspopup="listbox" aria-expanded="false" aria-label="Select language">
+          <div class="edge-light"></div>
+          <i class="ti ti-world language-icon" aria-hidden="true"></i>
+          <span class="lang-code" data-lang-code>EN</span>
+          <span class="lang-name" data-lang-name>English</span>
+          <i class="ti ti-chevron-down lang-chevron" aria-hidden="true"></i>
+        </button>
+        <ul class="lang-menu" data-lang-menu role="listbox" aria-label="Language">
+          <li role="option" data-lang-option="en">English</li>
+          <li role="option" data-lang-option="ur">اردو</li>
+          <li role="option" data-lang-option="ar">العربية</li>
+          <li role="option" data-lang-option="es">Español</li>
+          <li role="option" data-lang-option="fa">فارسی</li>
+        </ul>
+      </div>
+      <a class="glow-btn glow-btn-primary" href="#contact" style="width:100%; justify-content:center;"><div class="edge-light"></div><span data-i18n="nav.contact">Get in touch</span></a>
+    </div>
+  </div>
+</nav>
+
+<style>
+  .language-picker {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .nav-actions .nav-desktop-cta {
+    margin-left: 0;
+  }
+
+  .lang-trigger {
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 0;
+    font-size: 0.68rem;
+    --card-bg: #120F17;
+    --border-radius: 0px;
+  }
+
+  .lang-trigger > span { padding: 0; }
+
+  .lang-trigger:hover,
+  .lang-trigger:focus-visible {
+    outline: none;
+  }
+
+  .language-icon {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+
+  .lang-code {
+    min-width: 1.4em;
+    text-align: center;
+  }
+
+  .lang-name { display: none; }
+
+  .lang-chevron {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.55);
+    transition: transform 0.2s ease;
+  }
+
+  .lang-trigger[aria-expanded='true'] .lang-chevron {
+    transform: rotate(180deg);
+  }
+
+  .lang-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 140px;
+    margin: 0;
+    padding: 6px;
+    list-style: none;
+    border: 1px solid transparent;
+    border-radius: 0;
+    background:
+      linear-gradient(#120F17 0 100%) padding-box,
+      radial-gradient(at 80% 55%, hsla(268,100%,76%,1) 0, transparent 50%) border-box,
+      radial-gradient(at 69% 34%, hsla(349,100%,74%,1) 0, transparent 50%) border-box,
+      radial-gradient(at 8% 6%, hsla(136,100%,78%,1) 0, transparent 50%) border-box,
+      radial-gradient(at 41% 38%, hsla(192,100%,64%,1) 0, transparent 50%) border-box,
+      radial-gradient(at 86% 85%, hsla(186,100%,74%,1) 0, transparent 50%) border-box,
+      radial-gradient(at 82% 18%, hsla(52,100%,65%,1) 0, transparent 50%) border-box,
+      linear-gradient(#c299ff 0 100%) border-box;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s;
+    z-index: 200;
+  }
+
+  .lang-menu[data-open='true'] {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .lang-menu li {
+    padding: 8px 10px;
+    border-radius: 0;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+    text-transform: none;
+    text-decoration: none;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+  }
+
+  .lang-menu li:hover {
+    background: transparent;
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: #fff;
+  }
+
+  .lang-menu li.active {
+    background: transparent;
+    color: #fff;
+    text-decoration: underline;
+    text-decoration-color: #fff;
+  }
+
+  .mobile-language {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+
+  .mobile-language .lang-trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .mobile-language .lang-menu {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .desktop-language { display: none; }
+    .nav-actions { display: contents; }
+    .mobile-language .lang-code { display: none; }
+    .mobile-language .lang-name { display: inline; }
+  }
+
+  @media (min-width: 769px) {
+    .mobile-language { display: none; }
+  }
+</style>
+
+<script>
+  import { applyTranslations, initI18n, type Lang } from '../i18n/translations';
+
+  const hamburger = document.getElementById('hamburger') as HTMLButtonElement | null;
+  const navbar = document.getElementById('navbar') as HTMLElement | null;
+  const navMobileContent = document.getElementById('navMobileContent') as HTMLElement | null;
+
+  initI18n();
+
+  const switchers = document.querySelectorAll<HTMLElement>('[data-lang-switcher]');
+
+  function closeAllMenus(except?: HTMLElement): void {
+    switchers.forEach((switcher) => {
+      if (switcher === except) return;
+      const trigger = switcher.querySelector<HTMLButtonElement>('[data-lang-trigger]');
+      const menu = switcher.querySelector<HTMLElement>('[data-lang-menu]');
+      trigger?.setAttribute('aria-expanded', 'false');
+      menu?.removeAttribute('data-open');
+    });
+  }
+
+  switchers.forEach((switcher) => {
+    const trigger = switcher.querySelector<HTMLButtonElement>('[data-lang-trigger]');
+    const menu = switcher.querySelector<HTMLElement>('[data-lang-menu]');
+    if (!trigger || !menu) return;
+
+    trigger.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = menu.getAttribute('data-open') === 'true';
+      closeAllMenus(switcher);
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+      if (isOpen) menu.removeAttribute('data-open');
+      else menu.setAttribute('data-open', 'true');
+    });
+
+    menu.querySelectorAll<HTMLElement>('[data-lang-option]').forEach((option) => {
+      option.addEventListener('click', () => {
+        const lang = option.dataset.langOption as Lang | undefined;
+        if (lang) applyTranslations(lang);
+        trigger.setAttribute('aria-expanded', 'false');
+        menu.removeAttribute('data-open');
+      });
+    });
+  });
+
+  document.addEventListener('click', () => closeAllMenus());
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeAllMenus();
+  });
+
+  if (hamburger && navbar && navMobileContent) {
+    const navCards = navMobileContent.querySelectorAll<HTMLElement>('.nav-card');
+    let menuOpen = false;
+
+    function getExpandedHeight(): number {
+      const topRow = 64;
+      const padding = 28;
+      let cardsH = 0;
+      navCards.forEach((c) => {
+        const prev = c.style.transform;
+        const prevOp = c.style.opacity;
+        c.style.transform = 'translateY(0)';
+        c.style.opacity = '1';
+        cardsH += c.offsetHeight + 10;
+        c.style.transform = prev;
+        c.style.opacity = prevOp;
+      });
+      return topRow + padding + cardsH;
+    }
+
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      hamburger.classList.toggle('open', menuOpen);
+
+      if (menuOpen) {
+        const targetH = getExpandedHeight();
+        navbar.style.height = targetH + 'px';
+        navCards.forEach((card, i) => {
+          card.style.transition = `transform 0.35s cubic-bezier(0.23,1,0.32,1) ${i * 0.07 + 0.1}s, opacity 0.35s ease ${i * 0.07 + 0.1}s`;
+          card.style.transform = 'translateY(0)';
+          card.style.opacity = '1';
+        });
+      } else {
+        navbar.style.height = '64px';
+        navCards.forEach((card) => {
+          card.style.transition = 'transform 0.25s ease, opacity 0.2s ease';
+          card.style.transform = 'translateY(20px)';
+          card.style.opacity = '0';
+        });
+      }
+    });
+  }
+</script>

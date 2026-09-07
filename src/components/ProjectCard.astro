@@ -1,0 +1,621 @@
+---
+// ProjectCard.astro — a single project card + its "View in Terminal" modal.
+// Import this into ProjectCards.astro (or any grid) and pass a `project`.
+
+export interface Project {
+  id: string;
+  title: string;
+  status: "LIVE" | "BUILDING" | "CLIENT" | "OPEN SOURCE";
+  description: string;
+  stack: string[];
+  accent: "purple" | "blue" | "green";
+  image?: string; // put files in /public/projects/ and reference as "/projects/name.png", or use a full https:// URL
+  images?: string[]; // up to 3 screenshots for the "View in Terminal" modal carousel; falls back to [image] if omitted
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel: string;
+  secondaryHref: string;
+  why?: {
+    problem: string;
+    goal: string;
+    impact: string;
+  };
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project: p } = Astro.props;
+const opensTerminal = p.primaryLabel === "VIEW IN TERMINAL";
+const shots = (p.images && p.images.length > 0 ? p.images : p.image ? [p.image] : []).slice(0, 3);
+const secondaryKey = p.secondaryLabel === "GITHUB" ? "projects.github" : "projects.liveSite";
+const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.statusBuilding";
+---
+
+<article class={`card accent-${p.accent}`}>
+  <div class="card-body">
+    <div class="card-top">
+      <span class="id">{p.id}</span>
+    </div>
+
+    <h3>{p.title}</h3>
+    <p class="desc" data-i18n={`data.${p.id}.description`}>{p.description}</p>
+
+    <ul class="stack">
+      {p.stack.map((s) => (
+        <li><span class="dot"></span>{s}</li>
+      ))}
+    </ul>
+
+    <div class="actions">
+      {opensTerminal ? (
+        <button type="button" class="glow-btn glow-btn-primary view-terminal" data-modal={`modal-${p.id}`}>
+          <div class="edge-light"></div>
+          <span><span data-i18n="projects.viewInTerminal">{p.primaryLabel}</span> <span aria-hidden="true">&rarr;</span></span>
+        </button>
+      ) : (
+        <a href={p.primaryHref} class="glow-btn glow-btn-primary" target="_blank" rel="noreferrer">
+          <div class="edge-light"></div>
+          <span><span data-i18n="projects.viewInTerminal">{p.primaryLabel}</span> <span aria-hidden="true">&rarr;</span></span>
+        </a>
+      )}
+
+      <a href={p.secondaryHref} class="glow-btn glow-btn-ghost" target="_blank" rel="noreferrer">
+        <div class="edge-light"></div>
+        <span data-i18n={secondaryKey}>{p.secondaryLabel}</span>
+      </a>
+    </div>
+  </div>
+
+  <span class={`badge badge-${p.accent} badge-corner`}>
+    <span class="dot"></span>
+    <span data-i18n={statusKey}>{p.status}</span>
+  </span>
+
+  {p.image && (
+    <div class="card-media">
+      <img src={p.image} alt={p.title} loading="lazy" />
+    </div>
+  )}
+</article>
+
+{opensTerminal && (
+  <div class="tc-modal-overlay" id={`modal-${p.id}`}>
+    <div class="tc-modal">
+      <div class="tc-modal-bar">
+        <span class="dots">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+        </span>
+        <button type="button" class="tc-modal-tab active" data-modal-pane={`mp-${p.id}`}>
+          <i class="ti ti-terminal-2"></i> project.exe
+        </button>
+        <button type="button" class="tc-modal-tab" data-modal-pane={`ma-${p.id}`}>
+          <i class="ti ti-git-branch"></i> analysis.exe
+        </button>
+        <button type="button" class="modal-close" aria-label="Close">✕</button>
+      </div>
+
+      <div class="tc-modal-body">
+        <!-- ── project.exe pane ── -->
+        <div class="mpane show" id={`mp-${p.id}`}>
+          {shots.length > 0 && (
+            <div class="tc-modal-shot carousel" data-carousel>
+              <div class="carousel-track">
+                {shots.map((src, i) => (
+                  <img
+                    src={src}
+                    alt={`${p.title} screenshot ${i + 1}`}
+                    loading="lazy"
+                    class:list={['carousel-slide', { active: i === 0 }]}
+                    data-index={i}
+                  />
+                ))}
+              </div>
+
+              {shots.length > 1 && (
+                <Fragment>
+                  <button type="button" class="carousel-arrow carousel-prev" aria-label="Previous photo">‹</button>
+                  <button type="button" class="carousel-arrow carousel-next" aria-label="Next photo">›</button>
+                  <div class="carousel-dots">
+                    {shots.map((_, i) => (
+                      <button type="button" class:list={['carousel-dot', { active: i === 0 }]} data-index={i} aria-label={`Go to photo ${i + 1}`}></button>
+                    ))}
+                  </div>
+                </Fragment>
+              )}
+            </div>
+          )}
+
+          <div class="tc-modal-info">
+            <div class="mline"><span class="mprompt">$</span> cat project.json</div>
+            <hr />
+            <div class="mline"><span class="mk">name</span>: <span class="mv-white">"{p.title}"</span></div>
+            <div class="mline"><span class="mk">id</span>: <span class="mv-white">"{p.id}"</span></div>
+            <div class="mline"><span class="mk">stack</span>: <span class="mv-yellow">[{p.stack.map((s) => `"${s}"`).join(', ')}]</span></div>
+            <div class="mline">
+              <span class="mk">status</span>:
+              <span class:list={['mv-green', { 'mv-yellow': p.status !== 'LIVE' }]}>
+                "{p.status.toLowerCase()}{p.status === 'LIVE' ? ' ✓' : ' ~'}"
+              </span>
+            </div>
+            <hr />
+            <p class="mdesc">"<span data-i18n={`data.${p.id}.description`}>{p.description}</span>"</p>
+            <hr />
+            <div class="actions">
+              <a href={p.secondaryHref} class="glow-btn glow-btn-ghost" target="_blank" rel="noreferrer">
+                <div class="edge-light"></div>
+                <span data-i18n={secondaryKey}>{p.secondaryLabel}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── analysis.exe pane: flowchart + why ── -->
+        <div class="mpane" id={`ma-${p.id}`}>
+          <div class="flow-col">
+            <svg class="flowchart" viewBox="0 0 240 410" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <marker id={`arrow-${p.id}`} markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L0,8 L7,4 Z" fill="rgba(255,255,255,0.4)" />
+                </marker>
+              </defs>
+
+              <line x1="120" y1="40" x2="120" y2="72" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end={`url(#arrow-${p.id})`} />
+              <line x1="120" y1="112" x2="120" y2="144" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end={`url(#arrow-${p.id})`} />
+              <line x1="120" y1="184" x2="120" y2="216" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end={`url(#arrow-${p.id})`} />
+              <line x1="120" y1="256" x2="120" y2="288" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end={`url(#arrow-${p.id})`} />
+              <line x1="120" y1="328" x2="120" y2="360" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" marker-end={`url(#arrow-${p.id})`} />
+
+              <rect x="45" y="12" width="150" height="28" rx="14" fill="none" stroke="#22c55e" stroke-width="1.5" />
+              <text x="120" y="30" text-anchor="middle" class="fc-text fc-green" data-i18n="projects.flowStart">START</text>
+
+              <rect x="30" y="84" width="180" height="28" fill="none" stroke="#eab308" stroke-width="1.5" />
+              <text x="120" y="102" text-anchor="middle" class="fc-text fc-yellow" data-i18n="projects.flowProblem">Problem identified</text>
+
+              <polygon points="120,148 200,164 120,180 40,164" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+              <text x="120" y="168" text-anchor="middle" class="fc-text fc-cyan" data-i18n="projects.flowGoal">Goal defined?</text>
+
+              <rect x="40" y="220" width="160" height="28" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" />
+              <text x="120" y="238" text-anchor="middle" class="fc-text fc-white" data-i18n="projects.flowStackSelected">Stack selected</text>
+
+              <rect x="30" y="292" width="180" height="28" fill="none" stroke="#d946ef" stroke-width="1.5" />
+              <text x="120" y="310" text-anchor="middle" class="fc-text fc-purple" data-i18n="projects.flowFeatures">Features built</text>
+
+              <rect x="45" y="364" width="150" height="28" rx="14" fill="none" stroke="#06b6d4" stroke-width="1.5" />
+              <text x="120" y="382" text-anchor="middle" class="fc-text fc-cyan" data-i18n="projects.flowDeployed">Deployed ✓</text>
+            </svg>
+          </div>
+
+          <div class="why-col">
+            <div class="mline"><span class="mprompt">$</span> ./analysis.exe --why</div>
+            <hr />
+            <div class="why-item">
+              <span class="wk" data-i18n="projects.whyProblem">// problem</span>
+              <span class="wv" data-i18n={`data.${p.id}.why.problem`}>{p.why?.problem ?? 'Not documented yet.'}</span>
+            </div>
+            <div class="why-item">
+              <span class="wk" data-i18n="projects.whyGoal">// goal</span>
+              <span class="wv" data-i18n={`data.${p.id}.why.goal`}>{p.why?.goal ?? 'Not documented yet.'}</span>
+            </div>
+            <div class="why-item">
+              <span class="wk" data-i18n="projects.whyImpact">// impact</span>
+              <span class="wv" data-i18n={`data.${p.id}.why.impact`}>{p.why?.impact ?? 'Not documented yet.'}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+<style>
+  /* ── card: 0 radius + animated RGB beam border ──
+     Two-layer background (padding-box / border-box) draws a transparent
+     1.5px border that's actually a moving rainbow gradient — same
+     gradientMove keyframe the resume button already uses site-wide. */
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    border-radius: 0;
+    border: 1.5px solid transparent;
+    background:
+      linear-gradient(#0a0a0f, #0a0a0f) padding-box,
+      linear-gradient(135deg, #d946ef, #ec4899, #06b6d4, #22c55e, #eab308, #ec4899, #d946ef) border-box;
+    background-size: 100% 100%, 300% 300%;
+    animation: gradientMove 4s ease infinite;
+    overflow: hidden;
+    min-height: 380px;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+  .card:hover { transform: translateY(-2px); }
+  .card.accent-purple:hover { box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.35); }
+  .card.accent-blue:hover { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.35); }
+  .card.accent-green:hover { box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35); }
+
+  /* ── desktop: content left, image right (flex-row) ── */
+  .card-body {
+    position: relative;
+    z-index: 1;
+    flex: 1 1 54%;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-media {
+    position: relative;
+    flex: 1 1 46%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem 0.5rem 0;
+    pointer-events: none;
+  }
+  .card-media img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.6));
+  }
+  .card.accent-purple .card-media img { filter: drop-shadow(0 0 30px rgba(168, 85, 247, 0.25)) drop-shadow(0 20px 40px rgba(0,0,0,0.6)); }
+  .card.accent-blue   .card-media img { filter: drop-shadow(0 0 30px rgba(59, 130, 246, 0.25)) drop-shadow(0 20px 40px rgba(0,0,0,0.6)); }
+  .card.accent-green  .card-media img { filter: drop-shadow(0 0 30px rgba(16, 185, 129, 0.25)) drop-shadow(0 20px 40px rgba(0,0,0,0.6)); }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .id {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: #6b7280;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 0;
+    border: 1px solid;
+    padding: 0.25rem 0.75rem;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+  .badge .dot {
+    height: 0.4rem;
+    width: 0.4rem;
+    border-radius: 9999px;
+  }
+  .badge-corner {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 2;
+    background-color: #0a0a0f;
+  }
+  :global(html[dir='rtl']) .badge-corner {
+    right: auto;
+    left: 14px;
+  }
+  .badge-purple {
+    color: #e9d5ff;
+    background: rgba(168, 85, 247, 0.15);
+    border-color: #c084fc;
+    text-shadow: 0 0 8px rgba(192, 132, 252, 0.9);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.45), inset 0 0 10px rgba(168, 85, 247, 0.15);
+  }
+  .badge-purple .dot { background: #c084fc; box-shadow: 0 0 6px 1px #c084fc; }
+  .badge-blue {
+    color: #bfdbfe;
+    background: rgba(59, 130, 246, 0.15);
+    border-color: #60a5fa;
+    text-shadow: 0 0 8px rgba(96, 165, 250, 0.9);
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.45), inset 0 0 10px rgba(59, 130, 246, 0.15);
+  }
+  .badge-blue .dot { background: #60a5fa; box-shadow: 0 0 6px 1px #60a5fa; }
+  .badge-green {
+    color: #bbf7d0;
+    background: rgba(16, 185, 129, 0.15);
+    border-color: #34d399;
+    text-shadow: 0 0 8px rgba(52, 211, 153, 0.9);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.45), inset 0 0 10px rgba(16, 185, 129, 0.15);
+  }
+  .badge-green .dot { background: #34d399; box-shadow: 0 0 6px 1px #34d399; }
+
+  h3 {
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 0.5rem;
+  }
+  .desc {
+    color: #9ca3af;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0 0 1rem;
+  }
+  .stack {
+    list-style: none;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .stack li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #d1d5db;
+    font-size: 0.875rem;
+  }
+  .stack .dot {
+    height: 0.35rem;
+    width: 0.35rem;
+    border-radius: 9999px;
+    background: #9ca3af;
+    flex-shrink: 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.6rem;
+    margin-top: auto;
+  }
+  .actions .glow-btn { flex: 0 1 auto; min-width: 0; }
+  .actions .glow-btn span {
+    padding: 10px 14px;
+    font-size: 0.62rem;
+    white-space: nowrap;
+  }
+
+  /* ── mobile: flex-col, image stacks above content ── */
+  @media (max-width: 640px) {
+    .card { flex-direction: column; min-height: 0; }
+    .card-media {
+      order: -1;
+      width: 100%;
+      height: 200px;
+      padding: 0;
+    }
+    .card-media img {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+    }
+    .card-body { flex: 1 1 auto; }
+  }
+
+  /* ══════════════ MAXIMIZED MODAL ══════════════ */
+  .view-terminal { cursor: pointer; }
+
+  .tc-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 4vh 4vw;
+  }
+  .tc-modal-overlay.open { display: flex; }
+
+  .tc-modal {
+    width: 100%;
+    max-width: 1000px;
+    max-height: max-content;
+    background: #0a0a0f;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .tc-modal-bar {
+    height: 44px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 14px;
+    background: #000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .tc-modal-bar .dots { display: flex; gap: 6px; margin-right: 10px; }
+  .tc-modal-bar .dots span { width: 12px; height: 12px; border-radius: 50%; }
+  .tc-modal-bar .dot-r { background: #ff5f57; }
+  .tc-modal-bar .dot-y { background: #ffbd2e; }
+  .tc-modal-bar .dot-g { background: #28c840; }
+  .tc-modal-tab {
+    all: unset;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.4);
+    padding: 4px 12px;
+  }
+  .tc-modal-tab.active { color: #fff; box-shadow: inset 0 -2px 0 #06b6d4; }
+  .modal-close {
+    all: unset;
+    cursor: pointer;
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 15px;
+    transition: color 0.15s, background 0.15s;
+  }
+  .modal-close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
+
+  .tc-modal-body { position: relative; overflow-y: auto; }
+  .mpane { display: none; }
+  .mpane.show { display: flex; }
+
+  /* project.exe pane */
+  .tc-modal-shot {
+    width: 45%;
+    flex-shrink: 0;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .tc-modal-shot img { width: 100%; height: auto; object-fit: contain; }
+
+  /* ── 3-photo carousel ── */
+  .tc-modal-shot.carousel {
+    position: relative;
+    padding: 0;
+    overflow: hidden;
+  }
+  .carousel-track {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .carousel-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+  .carousel-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .carousel-arrow {
+    all: unset;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 20px;
+    line-height: 1;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    z-index: 2;
+    transition: background 0.15s, color 0.15s;
+  }
+  .carousel-arrow:hover { background: rgba(0, 0, 0, 0.8); color: #fff; }
+  .carousel-prev { left: 10px; }
+  .carousel-next { right: 10px; }
+  .carousel-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 12px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+  }
+  .carousel-dot {
+    all: unset;
+    cursor: pointer;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: background 0.15s, transform 0.15s;
+  }
+  .carousel-dot.active {
+    background: #06b6d4;
+    box-shadow: 0 0 6px 1px rgba(6, 182, 212, 0.6);
+  }
+
+  .tc-modal-info {
+    flex: 1;
+    padding: 30px 34px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    min-width: 0;
+  }
+  .tc-modal-info hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 14px 0; }
+  .mline { margin: 6px 0; }
+  .mprompt { color: #22c55e; }
+  .mk { color: #06b6d4; }
+  .mv-white { color: #fff; }
+  .mv-green { color: #22c55e; }
+  .mv-yellow { color: #eab308; }
+  .mdesc { font-size: 14px; line-height: 1.7; color: rgba(255, 255, 255, 0.55); margin: 0; }
+  .tc-modal-info .actions { margin-top: 20px; }
+
+  /* analysis.exe pane: flowchart left, why-text right */
+  .flow-col {
+    width: 45%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .flowchart { width: 200px; height: auto; }
+  .fc-text { font-family: 'Share Tech Mono', monospace; font-size: 11px; }
+  .fc-green { fill: #22c55e; }
+  .fc-yellow { fill: #eab308; }
+  .fc-cyan { fill: #06b6d4; }
+  .fc-purple { fill: #d946ef; }
+  .fc-white { fill: rgba(255, 255, 255, 0.85); }
+
+  .why-col {
+    flex: 1;
+    padding: 30px 34px;
+    font-family: 'Share Tech Mono', monospace;
+    min-width: 0;
+  }
+  .why-col hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.08); margin: 14px 0; }
+  .why-item { margin: 16px 0; }
+  .wk {
+    display: block;
+    color: #06b6d4;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .wv {
+    display: block;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+    line-height: 1.7;
+    padding-left: 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  @media (max-width: 700px) {
+    .tc-modal { max-height: 85vh; }
+    .mpane.show { flex-direction: column; }
+    .tc-modal-shot, .flow-col { width: 100%; padding: 16px; }
+    .tc-modal-info, .why-col { padding: 20px; }
+  }
+</style>

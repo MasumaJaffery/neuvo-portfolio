@@ -1,0 +1,126 @@
+---
+// Honest engineering note: true glyph-accurate "Matrix rain" needs a font
+// atlas to sample in a shader. Rather than fake a shader that only draws
+// blocks instead of real 0/1 characters, this draws the exact same
+// Canvas2D rain as before onto an off-screen canvas, then uploads that
+// canvas as a THREE.CanvasTexture onto a full-viewport WebGL plane.
+// The benefit over plain Canvas2D-in-the-DOM: this plane now lives in a
+// real Three.js scene, so it composites through the GPU and can be
+// layered with other WebGL effects (particles, distortion, etc.) later
+// without introducing a second, separate rendering pipeline.
+---
+
+<canvas id="binary-rain-canvas"></canvas>
+
+<style>
+  #binary-rain-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.35;
+  }
+</style>
+
+<script>
+  import * as THREE from 'three';
+
+  const glCanvas = document.getElementById('binary-rain-canvas') as HTMLCanvasElement | null;
+  if (glCanvas) {
+    // ── off-screen 2D canvas: identical rain algorithm as the original ──
+    const FS = 14;
+    const rainCanvas = document.createElement('canvas');
+    const ctx = rainCanvas.getContext('2d')!;
+
+    let cols = 0;
+    let rows = 0;
+    let headY: Float32Array;
+    let colHue: Float32Array;
+    let colSpeed: Float32Array;
+    let chars: Uint8Array;
+    let frame = 0;
+
+    function initRain(w: number, h: number): void {
+      rainCanvas.width = w;
+      rainCanvas.height = h;
+      cols = Math.floor(w / FS);
+      rows = Math.floor(h / FS);
+      headY = new Float32Array(cols);
+      colHue = new Float32Array(cols);
+      colSpeed = new Float32Array(cols);
+      chars = new Uint8Array(cols * rows);
+      for (let c = 0; c < cols; c++) {
+        headY[c] = Math.random() * rows;
+        colHue[c] = Math.random() * 360;
+        colSpeed[c] = 0.04 + Math.random() * 0.08;
+        for (let r = 0; r < rows; r++) {
+          chars[c * rows + r] = Math.random() > 0.5 ? 1 : 0;
+        }
+      }
+    }
+
+    function drawRain(): void {
+      frame++;
+      ctx.fillStyle = '#0a0a0f';
+      ctx.fillRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+      for (let c = 0; c < cols; c++) {
+        headY[c] += colSpeed[c];
+        if (headY[c] >= rows) {
+          headY[c] = 0;
+          colHue[c] = Math.random() * 360;
+        }
+        const head = Math.floor(headY[c]);
+        const hue = (colHue[c] + frame * 0.3) % 360;
+        const x = c * FS;
+
+        for (let r = 0; r <= head; r++) {
+          const dist = head - r;
+          const brightness = Math.max(0, 1 - (dist / rows) * 3.5);
+          if (brightness < 0.03) continue;
+          if (Math.random() < 0.003) chars[c * rows + r] ^= 1;
+          const isHead = r === head;
+          const ch = chars[c * rows + r] ? '1' : '0';
+          ctx.font = `${isHead ? FS + 1 : FS - 1}px 'Share Tech Mono', monospace`;
+          ctx.fillStyle = isHead
+            ? `rgba(255,255,255,${brightness})`
+            : `hsl(${hue},100%,${25 + brightness * 55}%)`;
+          ctx.fillText(ch, x, r * FS + FS);
+        }
+      }
+    }
+
+    // ── Three.js: upload that canvas as a texture on a full-screen quad ──
+    const scene = new THREE.Scene();
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+    const texture = new THREE.CanvasTexture(rainCanvas);
+    texture.minFilter = THREE.LinearFilter;
+
+    const geometry = new THREE.PlaneGeometry(2, 2);
+    const material = new THREE.MeshBasicMaterial({ map: texture });
+    scene.add(new THREE.Mesh(geometry, material));
+
+    const renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: false });
+    renderer.setPixelRatio(1); // the source canvas is already pixel-exact; avoid double-scaling
+
+    function resize(): void {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      renderer.setSize(w, h);
+      initRain(w, h);
+    }
+
+    function animate(): void {
+      drawRain();
+      texture.needsUpdate = true;
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    animate();
+  }
+</script>

@@ -1,0 +1,13 @@
+---
+export interface Props {
+  year?: number;
+}
+const { year = new Date().getFullYear() } = Astro.props;
+---
+
+<footer id="page-footer">
+  <div class="footer-inner">
+    <span class="footer-left">© {year} Masuma Jaffery. <span data-i18n="footer.builtWith">Built with TypeScript, Three.js &amp; Astro.</span></span>
+    <span class="footer-right"><span data-i18n="footer.managedBy">Managed by</span> <a href="#" class="footer-brand">iCodeDreams</a></span>
+  </div>
+</footer>
