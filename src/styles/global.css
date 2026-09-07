@@ -101,7 +101,9 @@
       gap: 10px;
       flex-direction: column;
       width: 100%;
+      pointer-events: none;
     }
+    .nav-mobile-content[data-open='true'] { pointer-events: auto; }
     .nav-card {
       border-radius: 0;
       padding: 16px 18px;

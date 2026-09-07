@@ -287,6 +287,7 @@
       if (menuOpen) {
         const targetH = getExpandedHeight();
         navbar.style.height = targetH + 'px';
+        navMobileContent.setAttribute('data-open', 'true');
         navCards.forEach((card, i) => {
           card.style.transition = `transform 0.35s cubic-bezier(0.23,1,0.32,1) ${i * 0.07 + 0.1}s, opacity 0.35s ease ${i * 0.07 + 0.1}s`;
           card.style.transform = 'translateY(0)';
@@ -294,6 +295,7 @@
         });
       } else {
         navbar.style.height = '64px';
+        navMobileContent.removeAttribute('data-open');
         navCards.forEach((card) => {
           card.style.transition = 'transform 0.25s ease, opacity 0.2s ease';
           card.style.transform = 'translateY(20px)';
