@@ -88,10 +88,10 @@ const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.status
           <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
         </span>
         <button type="button" class="tc-modal-tab active" data-modal-pane={`mp-${p.id}`}>
-          <i class="ti ti-terminal-2"></i> project.exe
+          <i class="ti ti-terminal-2"></i> <span class="tab-label">project.exe</span>
         </button>
         <button type="button" class="tc-modal-tab" data-modal-pane={`ma-${p.id}`}>
-          <i class="ti ti-git-branch"></i> analysis.exe
+          <i class="ti ti-git-branch"></i> <span class="tab-label">analysis.exe</span>
         </button>
         <button type="button" class="modal-close" aria-label="Close">✕</button>
       </div>
@@ -378,21 +378,49 @@ const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.status
     white-space: nowrap;
   }
 
-  /* ── mobile: flex-col, image stacks above content ── */
+  /* ══════════════ MOBILE FIXES (card) ══════════════ */
   @media (max-width: 640px) {
-    .card { flex-direction: column; min-height: 0; }
+    .card {
+      flex-direction: column;
+      min-height: 0;
+      overflow: visible;
+    }
+
     .card-media {
       order: -1;
       width: 100%;
       height: 200px;
       padding: 0;
+      overflow: hidden;
     }
     .card-media img {
       width: 100%;
-      height: auto;
-      max-height: 100%;
+      height: 100%;
+      max-width: none;
+      object-fit: cover;
     }
-    .card-body { flex: 1 1 auto; }
+
+    .card-body {
+      flex: 1 1 auto;
+      padding: 1.25rem;
+    }
+
+    .actions {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .actions .glow-btn {
+      flex: 1 1 auto;
+    }
+    .actions .glow-btn span {
+      white-space: normal;
+      justify-content: center;
+    }
+
+    .badge-corner {
+      top: 10px;
+      right: 10px;
+    }
   }
 
   /* ══════════════ MAXIMIZED MODAL ══════════════ */
@@ -424,6 +452,7 @@ const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.status
     overflow: hidden;
   }
 
+  /* ── modal top bar: no longer clips/overlaps on narrow screens ── */
   .tc-modal-bar {
     height: 44px;
     flex-shrink: 0;
@@ -433,12 +462,22 @@ const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.status
     padding: 0 14px;
     background: #000;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow-x: auto;
+    scrollbar-width: none;
   }
-  .tc-modal-bar .dots { display: flex; gap: 6px; margin-right: 10px; }
-  .tc-modal-bar .dots span { width: 12px; height: 12px; border-radius: 50%; }
+  .tc-modal-bar::-webkit-scrollbar { display: none; }
+
+  .tc-modal-bar .dots {
+    display: flex;
+    gap: 6px;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+  .tc-modal-bar .dots span { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
   .tc-modal-bar .dot-r { background: #ff5f57; }
   .tc-modal-bar .dot-y { background: #ffbd2e; }
   .tc-modal-bar .dot-g { background: #28c840; }
+
   .tc-modal-tab {
     all: unset;
     cursor: pointer;
@@ -449,8 +488,11 @@ const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.status
     font-size: 11.5px;
     color: rgba(255, 255, 255, 0.4);
     padding: 4px 12px;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .tc-modal-tab.active { color: #fff; box-shadow: inset 0 -2px 0 #06b6d4; }
+
   .modal-close {
     all: unset;
     cursor: pointer;
@@ -462,6 +504,7 @@ const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.status
     justify-content: center;
     color: rgba(255, 255, 255, 0.5);
     font-size: 15px;
+    flex-shrink: 0;
     transition: color 0.15s, background 0.15s;
   }
   .modal-close:hover { color: #fff; background: rgba(255, 255, 255, 0.08); }
@@ -613,9 +656,40 @@ const statusKey = p.status === "LIVE" ? "projects.statusLive" : "projects.status
   }
 
   @media (max-width: 700px) {
-    .tc-modal { max-height: 85vh; }
+    .tc-modal { height: 70vh; }
+    .tc-modal-overlay { padding: 2vh 3vw; }
     .mpane.show { flex-direction: column; }
     .tc-modal-shot, .flow-col { width: 100%; padding: 16px; }
     .tc-modal-info, .why-col { padding: 20px; }
   }
+
+  /* ── modal bar: extra tight on very small phones ── */
+  @media (max-width: 480px) {
+    .tc-modal-bar { padding: 0 8px; gap: 2px; }
+    .tc-modal-bar .dots { margin-right: 6px; }
+    .tc-modal-bar .dots span { width: 9px; height: 9px; }
+    .tc-modal-tab { font-size: 10px; padding: 4px 8px; }
+    .tc-modal-tab .tab-label { display: none; }
+    .modal-close { width: 24px; height: 24px; font-size: 13px; }
+  }
+
+  /* ── themed scrollbar for modal body (matches site's neon accent) ── */
+.tc-modal-body {
+  scrollbar-width: thin;                                   /* Firefox */
+  scrollbar-color: #06b6d4 rgba(255, 255, 255, 0.05);       /* Firefox: thumb track */
+}
+
+.tc-modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+.tc-modal-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+.tc-modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d946ef, #06b6d4, #22c55e);
+  border-radius: 4px;
+}
+.tc-modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ec4899, #22c55e, #eab308);
+}
 </style>
